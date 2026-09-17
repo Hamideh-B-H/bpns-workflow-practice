@@ -1,5 +1,6 @@
 @prefix core_vocab: <https://data.emobon.embrc.eu/ns/core_vocab#> .
 @prefix csvw: <http://www.w3.org/ns/csvw#> .
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
 @prefix dct: <http://purl.org/dc/terms/> .
 @prefix emobon-core: <https://data.emobon.embrc.eu/ns/core#> .
 @prefix emobon-sampling: <https://data.emobon.embrc.eu/ns/sampling#> .
@@ -23899,6 +23900,9 @@
 <http://data.emobon.embrc.eu/observatory-bpns-crate/water/observatory/BPNS#observatory_collection> a schema:Organization ;
     schema:member <http://data.emobon.embrc.eu/observatory-bpns-crate/water/observatory/BPNS> .
 
+<https://data.emobon.embrc.eu/bpns-workflow-practice> dcat:distribution <https://data.emobon.embrc.eu/bpns-workflow-practice/distribution/bluecloud-ENA> ;
+    schema:distribution <https://data.emobon.embrc.eu/bpns-workflow-practice/distribution/bluecloud-ENA> .
+
 <http://data.emobon.embrc.eu/observatory-bpns-crate/sediment/observatory/5669> a schema:Organization ;
     schema:email "5669"^^xsd:anyURI ;
     schema:name "European Marine Biological Resource Centre"^^xsd:string .
@@ -28778,6 +28782,16 @@
 
 <http://marineregions.org/mrgid/2350> mr:contains <http://marineregions.org/mrgid/26567> ;
     mr:isPartOf <http://marineregions.org/mrgid/1912> .
+
+<https://data.emobon.embrc.eu/bpns-workflow-practice/distribution/bluecloud-ENA> a dcat:Distribution,
+        schema:DataDownload ;
+    dct:issued "2026-09-17"^^xsd:date ;
+    dct:title "OBSERVATORY bluecloud-ENA Distribution" ;
+    dcat:downloadURL <https://github.com/Hamideh-B-H/bpns-workflow-practice/releases/download/bluecloud-ENA-latest/OBSERVATORY_bluecloud-ENA.zip> ;
+    dcat:mediaType "application/zip" ;
+    schema:contentUrl <https://github.com/Hamideh-B-H/bpns-workflow-practice/releases/download/bluecloud-ENA-latest/OBSERVATORY_bluecloud-ENA.zip> ;
+    schema:datePublished "2026-09-17"^^xsd:date ;
+    schema:name "OBSERVATORY bluecloud-ENA Distribution" .
 
 <http://data.emobon.embrc.eu/observatory-bpns-crate/sediment/sampling-event/BPNS_So_210701> a prov:Activity,
         sosa:Sampling ;
