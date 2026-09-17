@@ -1,0 +1,18 @@
+PREFIX prov: <http://www.w3.org/ns/prov#>
+PREFIX schema: <https://schema.org/>
+PREFIX dct: <http://purl.org/dc/terms/>
+
+CONSTRUCT {
+    <./> schema:contributor ?personUri .
+    ?personUri a schema:Person ;
+               schema:name ?name ;
+               schema:identifier ?personUri .
+}
+WHERE {
+    ?activity prov:wasAssociatedWith ?person .
+    { ?person a <https://schema.org/Person> } UNION { ?person a <http://schema.org/Person> }
+    { ?person <https://schema.org/name> ?name } UNION { ?person <http://schema.org/name> ?name }
+    { ?person <https://schema.org/identifier> ?orcid } UNION { ?person <http://schema.org/identifier> ?orcid }
+    FILTER(STR(?name) != "")
+    BIND(URI(STR(?orcid)) AS ?personUri)
+}

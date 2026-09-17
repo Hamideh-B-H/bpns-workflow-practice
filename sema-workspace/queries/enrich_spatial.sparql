@@ -1,0 +1,27 @@
+PREFIX emobon-core: <https://data.emobon.embrc.eu/ns/core#>
+PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+PREFIX schema: <https://schema.org/>
+PREFIX dct: <http://purl.org/dc/terms/>
+
+CONSTRUCT {
+    <./> schema:spatialCoverage ?place .
+    ?place a schema:Place ;
+           schema:name ?obsId ;
+           geo:hasGeometry ?geomNode ;
+           schema:geo ?geomNode ;
+           dct:isPartOf ?mrUri .
+    ?geomNode a geo:Geometry ;
+              geo:asWKT ?wkt .
+}
+WHERE {
+    ?obs a emobon-core:Observatory ;
+         emobon-core:observatoryId ?obsId ;
+         emobon-core:geoLocation ?loc .
+    ?loc geo:asWKT ?wkt .
+    OPTIONAL { 
+        ?obs emobon-core:marineRegion ?mr .
+        BIND(URI(STR(?mr)) AS ?mrUri)
+    }
+    BIND(URI(CONCAT('urn:spatial:', ?obsId)) AS ?place)
+    BIND(URI(CONCAT('urn:spatial:', ?obsId, ':geometry')) AS ?geomNode)
+}

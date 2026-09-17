@@ -1,0 +1,55 @@
+water_measured_task:
+  func: subyt
+  args:
+    template_folder: !resolve "{observatory-profile}/templates"
+    template_name: "water_measured.ldt.ttl"
+    source: !resolve "{observatory-crate}/logsheets/transformed/water_measured.csv"
+    extra_sources:
+      observatory: !resolve "{observatory-crate}/logsheets/transformed/water_observatory.csv"
+      schema: !resolve "{observatory-profile}/logsheet_schema_extended.csv"
+    sink: !resolve "{observatory-crate}/water/observation/{{source_mat_id}}"
+    variables:
+      baseref: "http://data.emobon.embrc.eu"
+    allow_repeated_sink_paths: true
+
+water_observatory_task:
+  func: subyt
+  args:
+    template_folder: !resolve "{observatory-profile}/templates"
+    template_name: "water_observatory.ldt.ttl"
+    source: !resolve "{observatory-crate}/logsheets/transformed/water_observatory.csv"
+    extra_sources:
+      schema: !resolve "{observatory-profile}/logsheet_schema_extended.csv"
+    sink: !resolve "{observatory-crate}/water/observatory/{{obs_id}}"
+    variables:
+      baseref: "http://data.emobon.embrc.eu"
+    allow_repeated_sink_paths: true
+
+water_sampling_task:
+  func: subyt
+  args:
+    template_folder: !resolve "{observatory-profile}/templates"
+    template_name: "water_sampling.ldt.ttl"
+    source: !resolve "{observatory-crate}/logsheets/transformed/water_sampling.csv"
+    extra_sources:
+      observatory: !resolve "{observatory-crate}/logsheets/transformed/water_observatory.csv"
+      schema: !resolve "{observatory-profile}/logsheet_schema_extended.csv"
+    sink: !resolve "{observatory-crate}/water/sampling-event/{{sampling_event}}"
+    variables:
+      baseref: "http://data.emobon.embrc.eu"
+    allow_repeated_sink_paths: true
+    unique_pattern: "{sampling_event}" 
+
+water_sample_task:
+  func: subyt
+  args:
+    template_folder: !resolve "{observatory-profile}/templates"
+    template_name: "water_sample.ldt.ttl"
+    source: !resolve "{observatory-crate}/logsheets/transformed/water_sampling.csv"
+    extra_sources:
+      observatory: !resolve "{observatory-crate}/logsheets/transformed/water_observatory.csv"
+      schema: !resolve "{observatory-profile}/logsheet_schema_extended.csv"
+    sink: !resolve "{observatory-crate}/water/sample/{{source_mat_id}}"
+    variables:
+      baseref: "http://data.emobon.embrc.eu"
+    allow_repeated_sink_paths: true

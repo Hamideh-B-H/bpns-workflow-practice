@@ -1,0 +1,188 @@
+{#- 
+Template: water_observatory.ldt.ttl.j2 
+Description: Template to generate triples from water_observatory.csv data collected in context of EMOBON. 
+Input: 
+    - observatory-{obs_id}-crate/logsheets-transformed/water_observatory.csv
+Sets: 
+    - observatory-profile/logsheet_schema_extended.csv as schema
+-#}
+
+{%- include './includes/prefixes.ttl' %}
+
+{%- set obsID_low = _.obs_id|lower %}
+{%- set env =  _.env_package  %}
+@base {{ ("http://data.emobon.embrc.eu/observatory-" ~ obsID_low ~ "-crate/" ~ env ~ "/observatory/" ~ _.obs_id) | uri }} . {# baseref ~ http://data.emobon.embrc.eu #}
+
+{{ ("http://data.emobon.embrc.eu/observatory-" ~ obsID_low ~ "-crate/" ~ env ~ "/observatory/" ~ _.obs_id ~ "#observatory_collection") | uri }}
+    a schema:Organization ;
+
+    schema:member  {{ ("http://data.emobon.embrc.eu/observatory-" ~ obsID_low ~ "-crate/" ~ env ~ "/observatory/" ~ _.obs_id) | uri }} ;
+.
+
+<> 
+    a emobon-core:Observatory ;
+    {%- if _.wa_id %} {# water #}
+    emobon-core:sampleType <https://data.emobon.embrc.eu/ns/core_vocab#water> ;
+    {%- elif _.so_id %} {# sediment #}
+    emobon-core:sampleType <https://data.emobon.embrc.eu/ns/core_vocab#soil> ;
+    {%- elif _.ha_id %} {# hard bottom --> make different template #}
+    emobon-core:sampleType <https://data.emobon.embrc.eu/ns/core_vocab#hard> ;
+    {%- endif %}
+
+    {%- if _.obs_id != "NA" %}
+    emobon-core:observatoryId {{ _.obs_id | xsd("string") }} ; 
+    {%- endif %}
+    {%- if _.wa_id != "NA" or _.so_id != "NA" or _.ha_id != "NA" %}
+    emobon-core:observatorySampleId {{ (_.wa_id or _.so_id or _.ha_id) | xsd("string") }} ; {#alert: column name differs between observatory types #} 
+    {%- endif %}
+
+    dct:isPartOf [
+        a schema:Project ; 
+        {%- if _.project_name != "NA" %}
+        schema:name {{_.project_name | xsd("string") }} ; 
+        {%- endif %}
+        schema:description "The EMO BON project"^^xsd:string ; 
+        {%- if _.ENA_accession_number_umbrella != "NA" %}
+        emobon-core:enaProjAccNum {{_.ENA_accession_number_umbrella | xsd("anyURI") }} ; 
+        {%- endif %}
+    ] ; 
+    {%- if _.data_owner_edmoid %}
+    dct:rightsHolder {{_.data_owner_edmoid | uri }} ; 
+    {%- endif %}
+
+    {%- if _.extra_site_info != "NA" %}
+    emobon-core:siteInfo {{ _.extra_site_info | xsd("string") }} ; 
+    {%- endif %}
+    {%- if _.env_broad_biome != "NA" %}
+    emobon-core:broadBiome {% for item in _.env_broad_biome.split(';') %} {{item.strip() | xsd("anyURI") }}{{ ", " if not loop.last else "" }}{%endfor%};
+    {%- endif %}
+    {%- if _.env_local != "NA" %}
+    emobon-core:localBiome {% for item in _.env_local.split(';') %}{{item.strip() | xsd("anyURI") }}{{ ", " if not loop.last else "" }}{% endfor %};
+    {%- endif %}
+
+    {#- marine region info #}
+    {%- if _.loc_broad_ocean != "NA" %}
+    emobon-core:marineRegionName {{_.loc_broad_ocean | xsd("string") }} ; 
+    {%- endif %}
+    {%- if _.loc_broad_ocean_mrgid != "NA" %}
+    emobon-core:marineRegion {{_.loc_broad_ocean_mrgid | xsd("anyURI") }} ; 
+    {%- endif %}
+    {%- if _.loc_regional != "NA" %}
+    emobon-core:marineRegionName {{_.loc_regional | xsd("string") }} ; 
+    {%- endif %}
+    {%- if _.loc_regional_mrgid != "NA" %}
+    emobon-core:marineRegion {{_.loc_regional_mrgid | xsd("anyURI") }} ; 
+    {%- endif %}
+    {%- if _.loc_loc != "NA" %}
+    emobon-core:marineRegionName {{_.loc_loc | xsd("string") }} ; 
+    {%- endif %}
+    {%- if _.loc_loc_mrgid != "NA" %}
+    emobon-core:marineRegion {{_.loc_loc_mrgid | xsd("anyURI") }} ; 
+    {%- endif %}
+
+    {%- if _.latitude != "NA" and _.longitude != "NA" %}
+    emobon-core:geoLocation [ 
+        a sf:Point ; 
+        geo:asWKT "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> Point ({{_.latitude}} {{_.longitude}})" ;
+    ]; 
+    {%- endif %}
+
+    {%- for item in _.organization.split(';') %} {# assumptions: lists of equal length & ';'-separated #}
+    schema:contactPoint [ 
+        a emobon-core:Organization ; 
+        {%- if item != "NA" %}
+        schema:legalName {{ item.strip() | xsd("string") }} ; 
+        {%- endif %}
+        {%- if _.organization_edmoid != "NA" %}
+        emobon-core:edmoId {{ _.organization_edmoid.split(';')[loop.index0].strip() | xsd("anyURI") }} ; 
+        {%- endif %}
+        schema:address [
+            a schema:PostalAddress ;
+            {%- if _.organization_country != "NA" %}
+            schema:addressCountry {{ _.organization_country | xsd("string") }} ; 
+            {%- endif %}
+            {#- schema:postalCode {{}} ; #} 
+            {#- schema:streetAddress {{}} ; #}
+        {%- if loop.index0 == 0 and (_.contact_name or _.contact_email or _.contact_orcid) %} {# assumption: contact person always linked to the first institute #}
+        schema:member [
+            a schema:Person ; 
+            {%- if _.contact_name != "NA" %}
+            schema:name {{ _.contact_name | xsd("string") }} ; 
+            {%- endif %}
+            {%- if _.contact_email != "NA" %}
+            schema:email {{ _.contact_email | xsd("string") }} ; 
+            {%- endif %}
+            {%- if _.contact_orcid and _.contact_orcid != "NA" %}
+            schema:identifier {{_.contact_orcid | xsd("anyURI") }} ;
+            {%- endif %}
+            {#org:hasMembership [
+                a org:Membership ; 
+                org:member {{person id}} ; 
+                org:organization {{institute id}} ; 
+                {%- if 'contact_valid_from' or 'contact_valid_until' %}
+                org:memberDuring [
+                    a time:Interval;
+                    {%- if  'contact_valid_from' %}  
+                    time:hasBeginning [ 
+                        time:inXSDDate {{contact_valid_from | xsd("date")}} ; 
+                    ] ;
+                    {%- endif %}
+                    {%- if  'contact_valid_until' %}
+                    time:hasEnd [ 
+                        time:inXSDDate {{contact_valid_until | xsd("date")}} ; 
+                    ] ; 
+                ] ;
+                {%- endif %}
+            ] ; #} 
+        ]
+        {%- endif %}
+        ] ; 
+    ] ; 
+    {%- endfor %}
+    
+    {#- emobon ontology extension predicates #}
+    {%- if _.tot_depth_water_col != "NA" %}
+    emobon-core:waterColumnDepth [
+        a qudt:QuantityValue ;
+            qudt:numericValue {{_.tot_depth_water_col | xsd("double") }} ; {#- usefull to also connect to sampling_event/sample #}
+            {%- for row in sets['schema']%}
+                {%- if row['LogsheetColumnTitle'] == 'tot_depth_water_col' %}
+                    {%- if row['Unit_URL'] and row['Unit_URL'] != "NA" %}
+            qudt:unit {{row['Unit_URL'].strip() | uri }} ;
+                    {%- elif row['Unit'] and row['Unit'] != "NA" %}
+            qudt:unit {{row['Unit'].strip() | xsd('string') }} ;
+                    {%- endif %} 
+                {%- endif %}
+            {%- endfor %}
+        ] ;
+    {%- endif %}
+    {%- if _.geo_loc_name != "NA" %}
+    emobon-core:originCountry {{_.geo_loc_name | xsd("string") }} ; {#- usefull to also connect to sampling_event/sample #}    
+    {%- endif %}
+    {%- if _.ENA_accession_number_project != "NA" %}
+    emobon-core:enaStudyAccNum {{_.ENA_accession_number_project | xsd("anyURI") }} ; 
+    {%- endif %}
+    {%- if _.env_package != "NA" %}
+    emobon-core:hasMixsPackage {{_.env_package | xsd("string") }} ; {#double check w/ Katrina whether column is correct #}
+    {%- endif %}
+.
+
+{# marine regions hierarchy statements #}
+{{ _.loc_broad_ocean_mrgid | uri }}
+    mr:contains {{ _.loc_regional_mrgid | uri }} ;
+.
+
+{{ _.loc_regional_mrgid| uri }}
+    mr:contains {{ _.loc_loc_mrgid | uri }} ;
+    mr:isPartOf {{ _.loc_broad_ocean_mrgid | uri }} ; 
+.
+
+{{ _.loc_loc_mrgid | uri }}
+    mr:isPartOf {{ _.loc_regional_mrgid | uri }} ;
+.
+
+{{_.data_owner_edmoid | uri }} 
+    a schema:Organization  ;
+    schema:name {{_.data_owner | xsd("string") }} ; 
+    schema:email {{_.data_owner_edmoid | xsd("anyURI") }} ; 
+.

@@ -1,0 +1,21 @@
+PREFIX emobon-core: <https://data.emobon.embrc.eu/ns/core#>
+PREFIX schema: <https://schema.org/>
+PREFIX dct: <http://purl.org/dc/terms/>
+
+CONSTRUCT {
+    <./> schema:provider ?edmoUri ;
+         schema:publisher <https://edmo.seadatanet.org/report/5669> .
+    ?edmoUri a schema:Organization ;
+             schema:name ?orgName ;
+             schema:identifier ?edmoUri .
+    <https://edmo.seadatanet.org/report/5669> a schema:Organization ;
+        schema:name "European Marine Biological Resource Centre (EMBRC-ERIC)" ;
+        schema:identifier <https://edmo.seadatanet.org/report/5669> .
+}
+WHERE {
+    ?obs a emobon-core:Observatory .
+    ?obs <https://schema.org/contactPoint> ?cp .
+    ?cp <https://schema.org/legalName> ?orgName ;
+        emobon-core:edmoId ?edmoId .
+    BIND(URI(STR(?edmoId)) AS ?edmoUri)
+}

@@ -1,0 +1,20 @@
+PREFIX sosa: <http://www.w3.org/ns/sosa/>
+PREFIX schema: <https://schema.org/>
+
+CONSTRUCT {
+    <./> schema:measurementTechnique ?technique ;
+         schema:instrument ?sampler .
+}
+WHERE {
+    {
+        ?obs a sosa:Observation .
+        { ?obs <https://schema.org/measurementTechnique> ?technique }
+        UNION
+        { ?obs <http://schema.org/measurementTechnique> ?technique }
+    }
+    UNION
+    {
+        ?sampling a sosa:Sampling ;
+                  sosa:madeBySampler ?sampler .
+    }
+}

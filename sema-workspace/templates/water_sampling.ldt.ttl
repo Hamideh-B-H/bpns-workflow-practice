@@ -1,0 +1,169 @@
+{#- 
+Template: water_sampling.ldt.ttl.j2 
+Description: Template to generate triples from water_sampling.csv data collected in context of EMOBON.
+Input: observatory-{obs_id}-crate/logsheets-transformed/sediment_sampling.csv
+Sets:   
+    - observatory-{obs_id}-crate/logsheets-transformed/sediment_observatory.csv as observatory 
+-#}
+
+{%- include './includes/prefixes.ttl' %}
+
+{%- for observatory in sets['observatory'] %}
+
+{%- set obsID_low = observatory.obs_id|lower %}
+{%- set env =  observatory.env_package  %}
+{%- set samplingEvent =  _.sampling_event.split(' ') |join("_") %}
+
+@base {{ ("http://data.emobon.embrc.eu/observatory-" ~ obsID_low ~"-crate/" ~ env ~ "/sampling-event/" ~ samplingEvent) | uri }} . {# baseref ~ http://data.emobon.embrc.eu #}
+
+{#- SAMPLING EVENT -#}
+<>
+    a sosa:Sampling, prov:Activity ;  
+    {# provenance part #}
+    dct:type "sampling"^^xsd:string ; 
+    {%- if _.collection_date and _.collection_date != "NA" %}
+    prov:endedAtTime {{_.collection_date | xsd("auto-date") }} ;
+    {%- endif %}
+    prov:wasAssociatedWith [
+        a prov:Person, schema:Person ;
+        {%- if _.sampl_person and _.sampl_person != "NA" %}
+        schema:name {{ _.sampl_person | xsd("string") }} ;
+        {%- endif %}
+        {%- if _.sampl_person_orcid and _.sampl_person_orcid != "NA" %}
+        schema:identifier {{_.sampl_person_orcid | xsd("anyURI") }} ;
+        {%- endif %}
+    ] ;
+    {# properties #}
+    {%- if _.collection_date and _.collection_date != "NA" %}
+    sosa:resultTime {{ _.collection_date | xsd("auto-date") }} ; {#xsd:dateTime not supported#}
+    {%- endif %}
+    {%- if _.samp_collect_device and _.samp_collect_device != "NA" %}
+    sosa:madeBySampler {{ _.samp_collect_device | xsd("string") }} ;
+    {%- endif %}
+    {%- if _.samp_mat_process != "NA" or _.samp_mat_process_dev != "NA" %}
+    sosa:usedProcedure [
+        a sosa:Procedure ; 
+        {%- if _.samp_mat_process and _.samp_mat_process != "NA" %}
+        rdfs:label {{ _.samp_mat_process | xsd("string") }} ;
+        {%- endif %}
+        {%- if _.samp_mat_process_dev and _.samp_mat_process_dev != "NA" %}
+        rdfs:comment {{ _.samp_mat_process_dev | xsd("string") }} ; 
+        {%- endif %}
+        rdfs:seeAlso "http://dx.doi.org/10.25607/OBP-1653"^^xsd:anyURI ;
+        ] ;
+    {%- endif %}
+    {%- if _.tidal_stage and _.tidal_stage != "NA" %}
+    emobon-sampling:tidalStage {{_.tidal_stage | xsd("string") }} ;
+    {%- endif %}
+    {%- if _.depth and _.depth != "NA" %}
+        {%- if _.depth.startswith('>')%} {#case 1: > #}
+    emobon-sampling:minSamplingDepth [
+        a qudt:QuantityValue ;
+        qudt:numericValue {{ _.depth| replace('>','') | xsd("double") }} ; 
+        {%- for row in sets['schema']%}
+            {%- if row['LogsheetColumnTitle'] == 'depth' %}
+                {%- if row['Unit_URL'] and row['Unit_URL'] != "NA" %}
+        qudt:unit {{row['Unit_URL'].strip() | uri }} ;
+                {%- elif row['Unit'] and row['Unit'] != "NA" %}
+        qudt:unit {{row['Unit'].strip() | xsd('string') }} ;
+                {%- endif %} 
+            {%- endif %}
+        {%- endfor %} 
+        ] ; 
+        {%- elif _.depth.startswith('<')%} {#case 2: < #}
+    emobon-sampling:maxSamplingDepth [
+        a qudt:QuantityValue ;
+        qudt:numericValue {{ _.depth | replace('<','') | xsd("double") }} ; 
+        {%- for row in sets['schema']%}
+            {%- if row['LogsheetColumnTitle'] == 'depth' %}
+                {%- if row['Unit_URL'] and row['Unit_URL'] != "NA" %}
+        qudt:unit {{row['Unit_URL'].strip() | uri }} ;
+                {%- elif row['Unit'] and row['Unit'] != "NA" %}
+        qudt:unit {{row['Unit'].strip() | xsd('string') }} ;
+                {%- endif %} 
+            {%- endif %}
+        {%- endfor %} 
+        ] ; 
+        {%- elif '-' in _.depth %} {# case 3: range x-y/x-x (assuming smallest always first) #}
+            {% set x,y = _.depth.split('-') %}
+    emobon-sampling:minSamplingDepth [
+        a qudt:QuantityValue ;
+        qudt:numericValue {{ x | xsd("double") }} ; 
+        {%- for row in sets['schema']%}
+            {%- if row['LogsheetColumnTitle'] == 'depth' %}
+                {%- if row['Unit_URL'] and row['Unit_URL'] != "NA" %}
+        qudt:unit {{row['Unit_URL'].strip() | uri }} ;
+                {%- elif row['Unit'] and row['Unit'] != "NA" %}
+        qudt:unit {{row['Unit'].strip() | xsd('string') }} ;
+                {%- endif %} 
+            {%- endif %}
+        {%- endfor %} 
+        ] ; 
+    emobon-sampling:maxSamplingDepth [
+        a qudt:QuantityValue ;
+        qudt:numericValue {{ y | xsd("double") }} ; 
+        {%- for row in sets['schema']%}
+            {%- if row['LogsheetColumnTitle'] == 'depth' %}
+                {%- if row['Unit_URL'] and row['Unit_URL'] != "NA" %}
+        qudt:unit {{row['Unit_URL'].strip() | uri }} ;
+                {%- elif row['Unit'] and row['Unit'] != "NA" %}
+        qudt:unit {{row['Unit'].strip() | xsd('string') }} ;
+                {%- endif %} 
+            {%- endif %}
+        {%- endfor %} 
+        ] ; 
+        {%- else %} {# case 4: single value #}
+    emobon-sampling:minSamplingDepth [
+        a qudt:QuantityValue ;
+        qudt:numericValue {{ _.depth | xsd("double") }} ; 
+        {%- for row in sets['schema']%}
+            {%- if row['LogsheetColumnTitle'] == 'depth' %}
+                {%- if row['Unit_URL'] and row['Unit_URL'] != "NA" %}
+        qudt:unit {{row['Unit_URL'].strip() | uri }} ;
+                {%- elif row['Unit'] and row['Unit'] != "NA" %}
+        qudt:unit {{row['Unit'].strip() | xsd('string') }} ;
+                {%- endif %} 
+            {%- endif %}
+        {%- endfor %} 
+        ] ; 
+    emobon-sampling:maxSamplingDepth [
+        a qudt:QuantityValue ;
+        qudt:numericValue {{ _.depth | xsd("double") }} ; 
+        {%- for row in sets['schema']%}
+            {%- if row['LogsheetColumnTitle'] == 'depth' %}
+                {%- if row['Unit_URL'] and row['Unit_URL'] != "NA" %}
+        qudt:unit {{row['Unit_URL'].strip() | uri }} ;
+                {%- elif row['Unit'] and row['Unit'] != "NA" %}
+        qudt:unit {{row['Unit'].strip() | xsd('string') }} ;
+                {%- endif %} 
+            {%- endif %}
+        {%- endfor %} 
+        ] ; 
+        {%- endif %}
+    {#emobon-sampling:samplingDepth {{ _.depth | xsd("string") }} ; #}    {%- endif %}
+    {%- if observatory.tot_depth_water_col and observatory.tot_depth_water_col != "NA" %}
+    emobon-core:waterColumnDepth {{observatory.tot_depth_water_col | xsd("string") }} ; {#info from observ file - better suited here#}
+    {%- endif %}
+    {%- if  observatory.geo_loc_name and observatory.geo_loc_name != "NA" %}
+    emobon-core:originCountry {{observatory.geo_loc_name | xsd("string") }} ; 
+    {%- endif %}
+    {# features of interest #}
+    {%- if _.env_material and _.env_material != "NA" %}
+    emobon-sampling:environmentMaterial {% for envo_url in _.env_material.split(';') %}{{ envo_url | uri }}{% if not loop.last %}, {%endif%}{% endfor %};
+    {%- endif %}
+    {%- if _.investigation_type and _.investigation_type != "NA" %}
+    emobon-sampling:investigationType {{_.investigation_type | xsd("string") }} ;
+    {%- endif %}
+    {%- if _.tax_id and _.tax_id != "NA" %}
+    emobon-sampling:taxonomicID {{_.tax_id | xsd("anyURI") }} ;
+    {%- endif %}
+    {%- if _.scientific_name and _.scientific_name != "NA" %}
+    emobon-sampling:taxonomicName {{_.scientific_name | xsd("string") }} ;
+    {%- endif %}
+    {%- if _.comm_samp and _.comm_samp != "NA" %}
+    emobon-sampling:bioCommunity {{ _.comm_samp | xsd("string") }} ; 
+    {%- endif %}
+    {# linked to observatory #}
+    emobon-sampling:linkedToObservatory {{ ("/observatory-" ~ obsID_low ~ "-crate/" ~ env ~ "/observatory/" ~ observatory.obs_id) | uri }} ; 
+.
+{%- endfor %}

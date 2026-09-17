@@ -1,0 +1,123 @@
+{#- 
+Template: arms_sampling.ldt.ttl 
+Description: Template to generate triples from arms sampling data collected in context of ARMS EMO-BON. 
+Input: 
+    - observatory-{obs_id}-crate/logsheets-transformed/hard_sampling.csv (name of csv file to be determined)
+Sets: 
+    - observatory-{obs_id}-crate/logsheets-transformed/sediment_observatory.csv as observatory
+-#}
+
+{% include './includes/prefixes.ttl' %}
+
+{# Need to retrieve obsID_low, env and ARMS_unit_id from source_mat_id ...  This assumes consistent structure of source_mat_id #}
+{% set namesarr = _.source_mat_id.split('_') %}
+{% set obsID = namesarr[1] %}
+{% set obsID_low = namesarr[1] | lower %}
+{% set ARMS_unit_id_low = namesarr[2] | lower %}
+{% set env =  observatory.env_package.split(' ') |join("_") %}
+{% set samplingEvent =  _.sampling_event.split(' ') |join("_") %} {# looking at logsheets, likely not needed but consistent with other observatory templates #}
+
+@base {{ "http://data.emobon.embrc.eu/observatory-" ~ obsID_low ~ "-crate/" ~ env ~ "/sampling-event/" ~ samplingEvent | uri }} . {# baseref ~ http://data.emobon.embrc.eu #}
+
+{#- SAMPLING EVENT #}
+<> 
+    a sosa:Sampling, prov:Activity ;  
+    {# provenance part #}
+    dct:type "sampling"^^xsd:string ; 
+    {%- if _.deployment_date and _.deployment_date != "NA" %}
+    prov:startedAtTime {{_.deployment_date | xsd("auto-date") }} ;
+    {%- endif %}
+    {%- if _.collection_date and _.collection_date != "NA" %}
+    prov:endedAtTime {{_.collection_date | xsd("auto-date") }} ; 
+    {%- endif %}
+    prov:wasAssociatedWith [
+        a prov:Person, schema:Person ;
+        {%- if _.sampl_person and _.sampl_person != "NA" %}
+        schema:name {{ _.sampl_person | xsd("string") }} ;
+        {%- endif %}
+        {%- if _.sampl_person_orcid and _.sampl_person_orcid != "NA" %}
+        schema:identifier {{_.sampl_person_orcid | xsd("anyURI") }} ;
+        {%- endif %}
+    ] ;
+    {# properties #}
+    {%- if _.collection_date and _.collection_date != "NA" %}
+    sosa:resultTime {{ _.collection_date | xsd("auto-date") }} ; {#xsd:dateTime not supported#}
+    {%- endif %}
+    {%- if observatory.env_package and observatory.env_package != "NA" %}
+    sosa:madeBySampler {{ observatory.env_package | xsd("string") }} ; 
+    {%- endif %}
+    {%- if _.samp_mat_process != "NA" or _.samp_mat_process_dev != "NA" %}
+    sosa:usedProcedure [
+        a sosa:Procedure ; 
+        {%- if _.samp_mat_process != "NA" %}
+        rdfs:label {{ _.samp_mat_process | xsd("string") }} ;
+        {%- endif %}
+        {%- if _.samp_mat_process_dev != "NA" %}
+        rdfs:comment {{ _.samp_mat_process_dev | xsd("string") }} ; 
+        {%- endif %}
+        rdfs:seeAlso "http://dx.doi.org/10.25607/OBP-1653"^^xsd:anyURI ;
+        ] ; 
+    {%- endif %}
+    {%- if _.preservative and _.preservative != "NA" %}
+    emobon-sampling:preservative {{ _.preservative | xsd('string')}} ; 
+    {%- endif %}
+    {%- if _.samp_fraction and _.samp_fraction != "NA" %}
+    emobon-sampling:fractionCollected {{ _.samp_fraction | replace("SF", "sessile fraction") | replace("MF", "motile fraction") | replace("blank", "control/blank")| xsd('string')}} ; 
+    {%- endif %}
+    {%- if _.crate_cover %}
+    emobon-sampling:armsCrateCoverUsed {{ _.crate_cover | xsd("boolean")}} ; 
+    {%- endif %}
+    {%- if _.images_in_PlutoF %}
+    emobon-sampling:imagesInPlutoF {{ _.images_in_PlutoF | xsd("boolean")}} ; 
+    {%- endif %}
+    {%- if _.depth and _.depth != "NA" %}
+    emobon-sampling:minSamplingDepth [
+        a qudt:QuantityValue ;
+        qudt:numericValue {{ _.depth | xsd("double") }} ; 
+        {%- for row in sets['schema']%}
+            {%- if row['LogsheetColumnTitle'] == 'depth' %}
+                {%- if row['Unit_URL'] and row['Unit_URL'] != "NA" %}
+        qudt:unit {{row['Unit_URL'].strip() | uri }} ;
+                {%- elif row['Unit'] and row['Unit'] != "NA" %}
+        qudt:unit {{row['Unit'].strip() | xsd('string') }} ;
+                {%- endif %} 
+            {%- endif %}
+        {%- endfor %} 
+        ] ; 
+    emobon-sampling:maxSamplingDepth [
+        a qudt:QuantityValue ;
+        qudt:numericValue {{ _.depth | xsd("double") }} ; 
+        {%- for row in sets['schema']%}
+            {%- if row['LogsheetColumnTitle'] == 'depth' %}
+                {%- if row['Unit_URL'] and row['Unit_URL'] != "NA" %}
+        qudt:unit {{row['Unit_URL'].strip() | uri }} ;
+                {%- elif row['Unit'] and row['Unit'] != "NA" %}
+        qudt:unit {{row['Unit'].strip() | xsd('string') }} ;
+                {%- endif %} 
+            {%- endif %}
+        {%- endfor %} 
+        ] ; 
+    {%- endif %}
+    {%- endif %}
+    {%- if observatory.tot_depth_water_col and observatory.tot_depth_water_col != "NA" %}
+    emobon-core:waterColumnDepth {{observatory.tot_depth_water_col | xsd("string") }} ; {#info from observ file - better suited here#}
+    {%- endif %}
+    {%- if observatory.geo_loc_name and observatory.geo_loc_name != "NA" %}
+    emobon-core:originCountry {{observatory.geo_loc_name | xsd("string") }} ; 
+    {%- endif %}
+    {# features of interest #}
+    {%- if _.env_material and _.env_material != "NA" %}
+    emobon-sampling:environmentMaterial {% for envo_url in _.env_material.split(';') %}{{ envo_url | uri }}{% if not loop.last %}, {%endif%}{% endfor %};
+    {%- endif %}
+    {%- if _.investigation_type and _.investigation_type != "NA" %}
+    emobon-sampling:investigationType {{_.investigation_type | xsd("string") }} ;
+    {%- endif %}
+    {%- if _.tax_id and _.tax_id != "NA" %}
+    emobon-sampling:taxonomicID {{_.tax_id | xsd("anyURI") }} ;
+    {%- endif %} 
+    {%- if _.scientific_name and _.scientific_name != "NA" %}
+    emobon-sampling:taxonomicName {{_.scientific_name | xsd("string") }} ;
+    {%- endif %}
+    {# linked to observatory #}
+    emobon-sampling:linkedToObservatory {{ "/observatory-" ~ obsID_low ~ "-crate/" ~ env ~ "/observatory/" ~ obsID ~ "-" ~ ARMS_unit_id_low| uri }} ; 
+.

@@ -1,0 +1,43 @@
+PREFIX emobon-core: <https://data.emobon.embrc.eu/ns/core#>
+PREFIX emobon-sampling: <https://data.emobon.embrc.eu/ns/sampling#>
+PREFIX schema: <https://schema.org/>
+
+CONSTRUCT {
+    <./> schema:keywords ?biomeDefTerm ;
+         schema:keywords ?envDefTerm ;
+         schema:keywords ?taxDefTerm ;
+         schema:keywords ?taxName ;
+         schema:keywords <https://inspire.ec.europa.eu/metadata-codelist/TopicCategory/biota> .
+
+    ?biomeDefTerm a schema:DefinedTerm ;
+                  schema:identifier ?biomeDefTerm .
+
+    ?envDefTerm a schema:DefinedTerm ;
+                schema:identifier ?envDefTerm .
+
+    ?taxDefTerm a schema:DefinedTerm ;
+                schema:identifier ?taxDefTerm ;
+                schema:name ?taxName .
+
+    <https://inspire.ec.europa.eu/metadata-codelist/TopicCategory/biota> a schema:DefinedTerm ;
+        schema:name "Biota" ;
+        schema:identifier <https://inspire.ec.europa.eu/metadata-codelist/TopicCategory/biota> .
+}
+WHERE {
+    {
+        ?obs a emobon-core:Observatory .
+        { ?obs emobon-core:broadBiome ?bUri . BIND(URI(STR(?bUri)) AS ?biomeDefTerm) }
+        UNION
+        { ?obs emobon-core:localBiome ?lUri . BIND(URI(STR(?lUri)) AS ?biomeDefTerm) }
+    }
+    UNION
+    {
+        ?sample a <http://www.w3.org/ns/sosa/Sample> .
+        OPTIONAL { ?sample emobon-sampling:environmentMaterial ?eUri . BIND(URI(STR(?eUri)) AS ?envDefTerm) }
+        OPTIONAL { 
+            ?sample emobon-sampling:taxonomicID ?tUri . 
+            BIND(URI(STR(?tUri)) AS ?taxDefTerm) 
+            OPTIONAL { ?sample emobon-sampling:taxonomicName ?taxName }
+        }
+    }
+}

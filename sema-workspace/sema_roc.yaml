@@ -1,0 +1,88 @@
+$:
+  prefix:
+    schema: "https://schema.org/"
+    dcat: "http://www.w3.org/ns/dcat#"
+    dct: "http://purl.org/dc/terms/"
+    sosa: "http://www.w3.org/ns/sosa/"
+    geo: "http://www.opengis.net/ont/geosparql#"
+    emobon-core: "https://data.emobon.embrc.eu/ns/core#"
+    emobon-sampling: "https://data.emobon.embrc.eu/ns/sampling#"
+    prov: "http://www.w3.org/ns/prov#"
+    qudt: "http://qudt.org/schema/qudt/"
+  glob_ignore:
+    - ".git/**"
+    - "data-quality-control/**"
+  reason:
+    sources:
+      - "all-triples.ttl"
+    queries:
+      - !resolve "{observatory-profile}/queries/enrich_variables.sparql"
+      - !resolve "{observatory-profile}/queries/enrich_spatial.sparql"
+      - !resolve "{observatory-profile}/queries/enrich_temporal.sparql"
+      - !resolve "{observatory-profile}/queries/enrich_keywords.sparql"
+      - !resolve "{observatory-profile}/queries/enrich_instruments.sparql"
+      - !resolve "{observatory-profile}/queries/enrich_title_description.sparql"
+      - !resolve "{observatory-profile}/queries/enrich_organizations.sparql"
+      - !resolve "{observatory-profile}/queries/enrich_contributors.sparql"
+
+ro-crate-metadata.json:
+  $type: CreativeWork
+  conformsTo: https://w3id.org/ro/crate/1.2
+  about: ./
+
+./:
+  $type:
+    - Dataset
+  description: The sampling activity logsheets for this given observatory
+  license: https://creativecommons.org/licenses/by/4.0/
+  datePublished: "2023-06-23"
+  name: !resolve "{REPO_NAME}"
+  dcat:contactPoint: https://orcid.org/0000-0002-8559-3508
+  dct:relation: https://github.com/emo-bon/sequencing-data
+  temporalCoverage: "2021-07-01/2024-10-22"
+  publisher: https://www.embrc.eu/emo-bon
+  maintainer:
+    - https://www.embrc.eu/emo-bon
+    - https://orcid.org/0000-0002-8559-3508
+  provider:
+    - https://www.vliz.be
+    - https://www.ugent.be
+  keywords:
+    - sample
+    - measurement
+    - biodiversity
+    - long-term-changes
+    - marine-environment
+    - genetics
+    - sediment-samples
+    - water-samples
+    - benthic-communities
+
+# Aggregated triples
+"all-triples.ttl":
+  $type: File
+  encodingFormat: text/turtle
+
+# Transformed CSV logsheets
+"logsheets/transformed/*.csv":
+  $type: File
+  encodingFormat: text/csv
+
+https://orcid.org/0000-0002-8559-3508:
+  $type: Person
+  name: Klaas Deneudt
+  email: klaas.deneudt@vliz.be
+  affiliation: https://www.vliz.be
+
+https://www.vliz.be:
+  $type: Organization
+  name: Flanders Marine Institute
+
+https://www.ugent.be:
+  $type: Organization
+  name: Ghent University
+
+https://www.embrc.eu/emo-bon:
+  $type: Project
+  name: EMO BON
+  email: emobon@embrc.eu

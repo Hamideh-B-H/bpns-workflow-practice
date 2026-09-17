@@ -1,0 +1,85 @@
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> . 
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix schema: <https://schema.org/> . 
+@prefix prov: <http://www.w3.org/ns/prov#> . 
+@prefix sosa: <http://www.w3.org/ns/sosa/> . 
+@prefix ssn: <http://www.w3.org/ns/ssn/> . 
+@prefix qudt: <http://qudt.org/schema/qudt/> . 
+@prefix sf: <http://www.opengis.net/ont/sf#> .
+@prefix geo: <http://www.opengis.net/ont/geosparql#> .
+@prefix mr: <http://marineregions.org/ns/ontology#> .
+@prefix emobon-sequence: <https://data.emobon.embrc.eu/ns/sequence#> .
+@prefix emobon-core: <https://data.emobon.embrc.eu/ns/core#> .
+@prefix emobon-sampling: <https://data.emobon.embrc.eu/ns/sampling#> .
+@prefix core_vocab: <https://data.emobon.embrc.eu/ns/core_vocab#> .
+@prefix csvw: <http://www.w3.org/ns/csvw#>.
+
+@base <http://data.emobon.embrc.eu/observatory-bpns-crate/water/sample/EMOBON_BPNS_Wa_133> .
+<> 
+    a sosa:Sample, prov:Entity ;
+    
+    sosa:isResultOf </observatory-bpns-crate/water/sampling-event/BPNS_Wa_220601> ;
+    
+    emobon-sampling:origEmobonId 'EMOBON 220601 BPNS Wa 20 R3'^^xsd:string ; 
+    
+    dct:description 'EMOBON metagenome water sample from station BPNS collected on 2022-06-01 size fraction 20um'^^xsd:string ;
+    emobon-sampling:sampleReplicate '3'^^xsd:string ;
+    schema:additionalType "http://vocab.nerc.ac.uk/collection/S29/current/PE001525/"^^xsd:anyURI ; 
+    schema:additionalType core_vocab:fieldSample ;
+    emobon-sampling:longStorage 'true'^^xsd:boolean ;
+    
+    emobon-sampling:hasSampleSize [
+        a qudt:QuantityValue ; 
+        qudt:numericValue '0.25'^^xsd:double ; 
+        qudt:unit <http://vocab.nerc.ac.uk/collection/P06/current/ULIT/> ;
+    ] ;
+    emobon-sampling:filterSizeRange '20'^^xsd:string ;
+    emobon-sampling:lowerFilterSize [
+        a qudt:QuantityValue ; 
+        qudt:numericValue '20.0'^^xsd:double ; 
+        qudt:unit <https://vocab.nerc.ac.uk/collection/P06/current/UXMM/> ;
+    ] ;
+    emobon-sampling:filtrationTime [
+        a qudt:QuantityValue ; 
+        qudt:numericValue '0.5'^^xsd:string ;
+        qudt:unit <https://vocab.nerc.ac.uk/collection/P06/current/UHOR/> ;
+    ] ;
+    emobon-sampling:membrCut 'false'^^xsd:boolean ;
+    
+    emobon-sampling:environmentMaterial <http://purl.obolibrary.org/obo/ENVO_00002149>, <http://purl.obolibrary.org/obo/ENVO_00002150>;
+    emobon-sampling:investigationType 'metagenome'^^xsd:string ;
+    emobon-sampling:taxonomicID 'https://www.ncbi.nlm.nih.gov/taxonomy/browser/wwwtax.cgi?id=1874687'^^xsd:anyURI ;
+    emobon-sampling:taxonomicName 'marine plankton metagenome'^^xsd:string ;
+
+    
+    prov:wasAssociatedWith [
+        a prov:Person, schema:Person ;
+        schema:name 'Rune Lagaisse'^^xsd:string ;
+        schema:identifier 'https://orcid.org/0000-0001-9191-9140'^^xsd:anyURI ;
+    ] , [
+        a prov:Person, schema:Person ;
+        schema:name 'Rune Lagaisse'^^xsd:string ;
+        schema:identifier 'https://orcid.org/0000-0001-9191-9140'^^xsd:anyURI ;
+    ]  ; 
+    prov:wasGeneratedBy [
+        a prov:Activity ;
+        dct:type "storage"^^xsd:string ; 
+        dct:description "Local storage of the collected sample"^^xsd:string ; 
+        prov:startedAtTime '2022-06-01'^^xsd:date ;
+        prov:wasAssociatedWith [
+            a prov:Person, schema:Person ;
+            schema:name 'Rune Lagaisse'^^xsd:string ;
+            schema:identifier 'https://orcid.org/0000-0001-9191-9140'^^xsd:anyURI ;
+        ] ;
+        emobon-sampling:storageTemp [
+            a qudt:QuantityValue ; 
+            qudt:numericValue '-80.0'^^xsd:double ; 
+            qudt:unit <http://vocab.nerc.ac.uk/collection/P06/current/UPAA/> ;
+        ] ;
+        emobon-sampling:storageLoc 'MSO LifeWatch Lab -80 Freezer'^^xsd:string ;
+        prov:wasInformedBy <> ;
+    ] ;
+.
+

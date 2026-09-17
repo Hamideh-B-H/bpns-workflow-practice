@@ -1,0 +1,31 @@
+PREFIX emobon-core: <https://data.emobon.embrc.eu/ns/core#>
+PREFIX schema: <https://schema.org/>
+PREFIX dct: <http://purl.org/dc/terms/>
+
+CONSTRUCT {
+    <./> schema:name ?title ;
+         dct:title ?title ;
+         schema:description ?desc ;
+         dct:description ?desc ;
+         schema:identifier ?canonicalId .
+}
+WHERE {
+    {
+        SELECT ?obsId ?country (GROUP_CONCAT(DISTINCT ?pkg; separator=", ") AS ?sampleTypes) WHERE {
+            ?obs a emobon-core:Observatory ;
+                 emobon-core:observatoryId ?obsId ;
+                 emobon-core:originCountry ?country .
+            OPTIONAL { ?obs emobon-core:hasMixsPackage ?pkg }
+        }
+        GROUP BY ?obsId ?country
+    }
+    BIND(CONCAT("Marine genomic sampling (meta)data from EMO BON Observation Network - station ", ?obsId, ", ", ?country) AS ?title)
+    BIND(CONCAT(
+        "Here you will find all the data collected from the log sheets produced by the European Marine Omics Biodiversity Observation Network (EMO BON) observatory ",
+        ?obsId,
+        " for their ",
+        ?sampleTypes,
+        " sampling activities. Log sheets are filled by the observatory during and after their sampling event, and every few months they are harvested, curated, and processed. The samples are sent for genomics processing: the raw genomic data can be found in ENA under PRJEB51688. The download from this metadata record is a copy of the sampling logsheets for all events for which sequences are available in ENA. It also includes a link to the website where you can find additional information and browse all other data."
+    ) AS ?desc)
+    BIND(URI(CONCAT("https://data.emobon.embrc.eu/observatory-", LCASE(?obsId), "-crate")) AS ?canonicalId)
+}

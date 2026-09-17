@@ -1,0 +1,49 @@
+$:
+  prefix:
+    schema: "https://schema.org/"
+    dcat: "http://www.w3.org/ns/dcat#"
+    dct: "http://purl.org/dc/terms/"
+    sosa: "http://www.w3.org/ns/sosa/"
+    geo: "http://www.opengis.net/ont/geosparql#"
+    emobon-core: "https://data.emobon.embrc.eu/ns/core#"
+    emobon-sampling: "https://data.emobon.embrc.eu/ns/sampling#"
+    prov: "http://www.w3.org/ns/prov#"
+    qudt: "http://qudt.org/schema/qudt/"
+  glob_ignore:
+    - ".git/**"
+    - "data-quality-control/**"
+  reason:
+    sources:
+      - "all-triples.ttl"
+    queries:
+      - !resolve "{observatory-profile}/queries/enrich_variables.sparql"
+      - !resolve "{observatory-profile}/queries/enrich_spatial.sparql"
+      - !resolve "{observatory-profile}/queries/enrich_temporal.sparql"
+      - !resolve "{observatory-profile}/queries/enrich_keywords.sparql"
+      - !resolve "{observatory-profile}/queries/enrich_instruments.sparql"
+      - !resolve "{observatory-profile}/queries/enrich_title_description.sparql"
+      - !resolve "{observatory-profile}/queries/enrich_organizations.sparql"
+      - !resolve "{observatory-profile}/queries/enrich_contributors.sparql"
+
+ro-crate-metadata.json:
+  $type: CreativeWork
+  conformsTo: https://w3id.org/ro/crate/1.2
+  about: ./
+
+./:
+  $type:
+    - Dataset
+  license: https://creativecommons.org/licenses/by/4.0/
+  datePublished: "2023-06-23"
+  dct:relation: https://github.com/emo-bon/sequencing-data
+  publisher: https://edmo.seadatanet.org/report/5669
+  keywords:
+    - sample
+    - measurement
+    - biodiversity
+    - long-term-changes
+    - marine-environment
+    - genetics
+    - sediment-samples
+    - water-samples
+    - benthic-communities

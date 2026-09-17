@@ -1,0 +1,123 @@
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> . 
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix schema: <https://schema.org/> . 
+@prefix prov: <http://www.w3.org/ns/prov#> . 
+@prefix sosa: <http://www.w3.org/ns/sosa/> . 
+@prefix ssn: <http://www.w3.org/ns/ssn/> . 
+@prefix qudt: <http://qudt.org/schema/qudt/> . 
+@prefix sf: <http://www.opengis.net/ont/sf#> .
+@prefix geo: <http://www.opengis.net/ont/geosparql#> .
+@prefix mr: <http://marineregions.org/ns/ontology#> .
+@prefix emobon-sequence: <https://data.emobon.embrc.eu/ns/sequence#> .
+@prefix emobon-core: <https://data.emobon.embrc.eu/ns/core#> .
+@prefix emobon-sampling: <https://data.emobon.embrc.eu/ns/sampling#> .
+@prefix core_vocab: <https://data.emobon.embrc.eu/ns/core_vocab#> .
+@prefix csvw: <http://www.w3.org/ns/csvw#>.
+@base <http://data.emobon.embrc.eu/observatory-bpns-crate/water/observatory/BPNS> . 
+
+<http://data.emobon.embrc.eu/observatory-bpns-crate/water/observatory/BPNS#observatory_collection>
+    a schema:Organization ;
+
+    schema:member  <http://data.emobon.embrc.eu/observatory-bpns-crate/water/observatory/BPNS> ;
+.
+
+<> 
+    a emobon-core:Observatory ; 
+    emobon-core:sampleType <https://data.emobon.embrc.eu/ns/core_vocab#water> ;
+    emobon-core:observatoryId 'BPNS'^^xsd:string ;
+    emobon-core:observatorySampleId 'BPNS Wa'^^xsd:string ; 
+
+    dct:isPartOf [
+        a schema:Project ;
+        schema:name 'EMOBON'^^xsd:string ;
+        schema:description "The EMO BON project"^^xsd:string ;
+        emobon-core:enaProjAccNum 'https://identifiers.org/ena.embl:PRJEB51688'^^xsd:anyURI ;
+    ] ;
+    dct:rightsHolder <5669> ;
+    emobon-core:siteInfo 'Station that has historic data going back to 1980’s and has monthly environmental measurements since 2001. Site participated in Ocean Sampling day activities for years 2012 2017 2018 2019 2020 and OSD12x. Parallel genomic biodiversity sampling in 2014 and monthly in 2016. The spring phytoplankton bloom (expressed as chlorophyll a) typically occurs between March to May. A spring diatom community is ‘followed’ by a bloom of Phaeocystis globosa and a summer diatom bloom. (Desmit. et al. 2015). A number of potentially harmful algal species occur such as Pseudo-nitzschia and several dinoflagellate genera (e.g. Prorocentrum Alexandrium..). (Nohe et al. 2019). BPNS is characterised by high antropogenic activity (Intense shipping traffic offshore windmill farms dredging etc.)'^^xsd:string ;
+    emobon-core:broadBiome  'http://purl.obolibrary.org/obo/ENVO_00000447'^^xsd:anyURI,  'http://purl.obolibrary.org/obo/ENVO_01000023'^^xsd:anyURI;
+    emobon-core:localBiome 'http://purl.obolibrary.org/obo/ENVO_01000044'^^xsd:anyURI, 'http://purl.obolibrary.org/obo/ENVO_00001999'^^xsd:anyURI, 'http://purl.obolibrary.org/obo/ENVO_02000049'^^xsd:anyURI;
+    emobon-core:marineRegionName 'North Atlantic Ocean'^^xsd:string ;
+    emobon-core:marineRegion 'http://marineregions.org/mrgid/1912'^^xsd:anyURI ;
+    emobon-core:marineRegionName 'North Sea'^^xsd:string ;
+    emobon-core:marineRegion 'http://marineregions.org/mrgid/2350'^^xsd:anyURI ;
+    emobon-core:marineRegionName 'Belgian part of the North Sea'^^xsd:string ;
+    emobon-core:marineRegion 'http://marineregions.org/mrgid/26567'^^xsd:anyURI ;
+    emobon-core:geoLocation [ 
+        a sf:Point ; 
+        geo:asWKT "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> Point (51.433331 2.808331)" ;
+    ]; 
+    schema:contactPoint [ 
+        a emobon-core:Organization ;
+        schema:legalName 'Flanders Marine Institute (VLIZ)'^^xsd:string ;
+        emobon-core:edmoId 'https://edmo.seadatanet.org/report/422'^^xsd:anyURI ;
+        schema:address [
+            a schema:PostalAddress ;
+            schema:addressCountry 'Belgium'^^xsd:string ; 
+        schema:member [
+            a schema:Person ;
+            schema:name 'Hanneloor Heynderickx'^^xsd:string ;
+            schema:email 'hanneloor.heynderickx@vliz.be'^^xsd:string ;
+            schema:identifier 'https://orcid.org/0000-0002-5611-837X'^^xsd:anyURI ;
+             
+        ]
+        ] ; 
+    ] ; 
+    schema:contactPoint [ 
+        a emobon-core:Organization ;
+        schema:legalName 'Ghent University'^^xsd:string ;
+        emobon-core:edmoId 'https://edmo.seadatanet.org/report/449'^^xsd:anyURI ;
+        schema:address [
+            a schema:PostalAddress ;
+            schema:addressCountry 'Belgium'^^xsd:string ;
+        ] ; 
+    ] ; 
+    schema:contactPoint [ 
+        a emobon-core:Organization ;
+        schema:legalName 'Royal Belgian Institute of Natural Sciences'^^xsd:string ;
+        emobon-core:edmoId 'https://edmo.seadatanet.org/report/432'^^xsd:anyURI ;
+        schema:address [
+            a schema:PostalAddress ;
+            schema:addressCountry 'Belgium'^^xsd:string ;
+        ] ; 
+    ] ; 
+    schema:contactPoint [ 
+        a emobon-core:Organization ;
+        schema:legalName 'Katholieke Universiteit Leuven'^^xsd:string ;
+        emobon-core:edmoId 'https://edmo.seadatanet.org/report/2248'^^xsd:anyURI ;
+        schema:address [
+            a schema:PostalAddress ;
+            schema:addressCountry 'Belgium'^^xsd:string ;
+        ] ; 
+    ] ;
+    emobon-core:waterColumnDepth [
+        a qudt:QuantityValue ;
+            qudt:numericValue '26.0'^^xsd:double ;
+            qudt:unit <http://vocab.nerc.ac.uk/collection/P06/current/ULAA/> ;
+        ] ;
+    emobon-core:originCountry 'Belgium'^^xsd:string ;
+    emobon-core:enaStudyAccNum 'https://identifiers.org/ena.embl:PRJEB51652'^^xsd:anyURI ;
+    emobon-core:hasMixsPackage 'water'^^xsd:string ; 
+.
+
+
+<http://marineregions.org/mrgid/1912>
+    mr:contains <http://marineregions.org/mrgid/2350> ;
+.
+
+<http://marineregions.org/mrgid/2350>
+    mr:contains <http://marineregions.org/mrgid/26567> ;
+    mr:isPartOf <http://marineregions.org/mrgid/1912> ; 
+.
+
+<http://marineregions.org/mrgid/26567>
+    mr:isPartOf <http://marineregions.org/mrgid/2350> ;
+.
+
+<5669> 
+    a schema:Organization  ;
+    schema:name 'European Marine Biological Resource Centre'^^xsd:string ; 
+    schema:email '5669'^^xsd:anyURI ; 
+.

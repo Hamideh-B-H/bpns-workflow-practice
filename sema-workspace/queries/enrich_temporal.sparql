@@ -1,0 +1,26 @@
+PREFIX sosa: <http://www.w3.org/ns/sosa/>
+PREFIX prov: <http://www.w3.org/ns/prov#>
+PREFIX schema: <https://schema.org/>
+PREFIX dct: <http://purl.org/dc/terms/>
+PREFIX dcat: <http://www.w3.org/ns/dcat#>
+PREFIX emobon-sampling: <https://data.emobon.embrc.eu/ns/sampling#>
+
+CONSTRUCT {
+    <./> schema:temporalCoverage ?isoRange ;
+         dct:temporal ?temporalNode .
+    ?temporalNode a dct:PeriodOfTime ;
+                  dcat:startDate ?minDate ;
+                  dcat:endDate ?maxDate .
+}
+WHERE {
+    {
+        SELECT (MIN(?d) AS ?minDate) (MAX(?d) AS ?maxDate) WHERE {
+            ?sample a sosa:Sample ;
+                    emobon-sampling:enaSampleAccNum ?ena ;
+                    sosa:isResultOf ?event .
+            ?event prov:endedAtTime ?d .
+        }
+    }
+    BIND(CONCAT(STR(?minDate), '/', STR(?maxDate)) AS ?isoRange)
+    BIND(URI('urn:temporal:coverage') AS ?temporalNode)
+}

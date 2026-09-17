@@ -1,0 +1,18 @@
+PREFIX sosa: <http://www.w3.org/ns/sosa/>
+PREFIX schema: <https://schema.org/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX dct: <http://purl.org/dc/terms/>
+
+CONSTRUCT {
+    <./> schema:variableMeasured ?propUri .
+    ?propUri a schema:PropertyValue ;
+             schema:name ?label ;
+             schema:propertyID ?propUri ;
+             schema:identifier ?propUri .
+}
+WHERE {
+    ?obs a sosa:Observation ;
+         sosa:observedProperty ?prop .
+    ?prop rdfs:label ?label ;
+          dct:identifier ?propUri .
+}
