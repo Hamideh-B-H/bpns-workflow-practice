@@ -1,0 +1,64 @@
+jobs:
+  job:
+    env:
+      DATA_QUALITY_CONTROL_ASSIGNEE: Hamideh-B-H
+      DATA_QUALITY_CONTROL_THRESHOLD_DATE: '2022-12-31'
+      GITHUB_REPOSITORY: ${{ github.repository }}
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      HARD_LOGSHEET_URL: https://docs.google.com/spreadsheets/d/1qhp2osFgZ9xuHg59AzwCAw2AoVjl3m8OEO5ou_oZOqg/edit?usp=sharing
+      RDF_AGGREGATOR_GLOB: sediment/**/*:ttl,water/**/*:ttl,ro-crate-metadata.json:json-ld
+      ROCRATE_PROFILE_URI: https://data.emobon.embrc.eu/observatory-profile/latest
+      SEDIMENT_LOGSHEET_URL: https://docs.google.com/spreadsheets/d/1zc0bZdpl-Eoi35lI_5BGkElbscplyQRyNPLkSgeEyEQ/edit?usp=sharing
+      WATER_LOGSHEET_URL: https://docs.google.com/spreadsheets/d/1mEi4Bd2YR63WD0j54FQ6QkzcUw_As9Wilue9kaXO2DE/edit?usp=sharing
+    runs-on: ubuntu-latest
+    steps:
+    - name: checkout
+      uses: actions/checkout@v5
+    - name: populate-action
+      uses: emo-bon/populate-action@main
+    - name: git-auto-commit-action
+      uses: stefanzweifel/git-auto-commit-action@v7
+      with:
+        commit_message: update on behalf of populate-action
+    - name: data-quality-control-action
+      uses: emo-bon/data-quality-control-action@main
+    - name: git-auto-commit-action
+      uses: stefanzweifel/git-auto-commit-action@v7
+      with:
+        commit_message: update on behalf of data-quality-control-action
+    - name: semantic-uplifting-action
+      uses: emo-bon/semantic-uplifting-action@main
+    - name: git-auto-commit-action
+      uses: stefanzweifel/git-auto-commit-action@v5
+      with:
+        commit_message: update on behalf of semantic-uplifting-action
+      # --- New subsetting step ---
+    - name: subsetted-distribution-creation-action
+      uses: emo-bon/subsetted-distribution-creation-action@main
+      with:
+        distribution_affix: bluecloud-ENA
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        
+    - name: git-auto-commit-action
+      uses: stefanzweifel/git-auto-commit-action@v5
+      with:
+        commit_message: update all-triples.ttl with subsetted distribution
+    # ---------------------------
+    - name: rocrate-to-pages
+      uses: vliz-be-opsci/rocrate-to-pages@latest
+      with:
+        include_draft: false
+        index_html: false
+        multiple_rocrates: true
+        release_management: false
+        space_to_pages_homepage: https://data.emobon.embrc.eu
+    - name: actions-gh-pages
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./unicornpages
+name: observatory-crate-workflow
+'on':
+  schedule:
+  - cron: 0 0 1 */6 *
+  workflow_dispatch: null
