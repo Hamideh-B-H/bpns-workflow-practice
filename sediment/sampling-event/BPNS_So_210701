@@ -1,0 +1,60 @@
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> . 
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix schema: <https://schema.org/> . 
+@prefix prov: <http://www.w3.org/ns/prov#> . 
+@prefix sosa: <http://www.w3.org/ns/sosa/> . 
+@prefix ssn: <http://www.w3.org/ns/ssn/> . 
+@prefix qudt: <http://qudt.org/schema/qudt/> . 
+@prefix sf: <http://www.opengis.net/ont/sf#> .
+@prefix geo: <http://www.opengis.net/ont/geosparql#> .
+@prefix mr: <http://marineregions.org/ns/ontology#> .
+@prefix emobon-sequence: <https://data.emobon.embrc.eu/ns/sequence#> .
+@prefix emobon-core: <https://data.emobon.embrc.eu/ns/core#> .
+@prefix emobon-sampling: <https://data.emobon.embrc.eu/ns/sampling#> .
+@prefix core_vocab: <https://data.emobon.embrc.eu/ns/core_vocab#> .
+@prefix csvw: <http://www.w3.org/ns/csvw#>.
+
+@base <http://data.emobon.embrc.eu/observatory-bpns-crate/sediment/sampling-event/BPNS_So_210701> . 
+<> 
+    a sosa:Sampling, prov:Activity ;  
+    
+    dct:type "sampling"^^xsd:string ;
+    prov:endedAtTime '2021-07-01'^^xsd:date ;
+    prov:wasAssociatedWith [
+        a prov:Person, schema:Person ;
+        schema:name 'Lara Macheriotou'^^xsd:string ;
+        schema:identifier 'https://orcid.org/0000-0002-5662-5689'^^xsd:anyURI ;
+    ] ;
+    
+    sosa:resultTime '2021-07-01'^^xsd:date ;
+    sosa:madeBySampler 'Van Veen Grab'^^xsd:string ;
+    sosa:usedProcedure [
+        a sosa:Procedure ;
+        rdfs:label 'SoSOP3'^^xsd:string ;
+        rdfs:seeAlso "http://dx.doi.org/10.25607/OBP-1653"^^xsd:anyURI ;
+        ] ;
+    emobon-sampling:tidalStage 'ebb_tide'^^xsd:string ; 
+    emobon-sampling:minSamplingDepth [
+        a qudt:QuantityValue ;
+        qudt:numericValue '23.09'^^xsd:double ;
+        qudt:unit <http://vocab.nerc.ac.uk/collection/P06/current/ULAA/> ; 
+        ] ; 
+    emobon-sampling:maxSamplingDepth [
+        a qudt:QuantityValue ;
+        qudt:numericValue '23.09'^^xsd:double ;
+        qudt:unit <http://vocab.nerc.ac.uk/collection/P06/current/ULAA/> ; 
+        ] ;
+    
+    emobon-core:waterColumnDepth '26'^^xsd:string ; 
+    emobon-core:originCountry 'Belgium'^^xsd:string ;
+    
+    emobon-sampling:environmentMaterial <http://purl.obolibrary.org/obo/ENVO_00002007>;
+    emobon-sampling:investigationType 'mimarks-specimen'^^xsd:string ;
+    emobon-sampling:taxonomicID 'https://www.ncbi.nlm.nih.gov/taxonomy/browser/wwwtax.cgi?id=33208'^^xsd:anyURI ;
+    emobon-sampling:taxonomicName 'Metazoa'^^xsd:string ;
+    emobon-sampling:bioCommunity 'meio'^^xsd:string ;
+    
+    emobon-sampling:linkedToObservatory </observatory-bpns-crate/sediment/observatory/BPNS> ; 
+.

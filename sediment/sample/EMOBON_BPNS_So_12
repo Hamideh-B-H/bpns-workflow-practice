@@ -1,0 +1,110 @@
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> . 
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix schema: <https://schema.org/> . 
+@prefix prov: <http://www.w3.org/ns/prov#> . 
+@prefix sosa: <http://www.w3.org/ns/sosa/> . 
+@prefix ssn: <http://www.w3.org/ns/ssn/> . 
+@prefix qudt: <http://qudt.org/schema/qudt/> . 
+@prefix sf: <http://www.opengis.net/ont/sf#> .
+@prefix geo: <http://www.opengis.net/ont/geosparql#> .
+@prefix mr: <http://marineregions.org/ns/ontology#> .
+@prefix emobon-sequence: <https://data.emobon.embrc.eu/ns/sequence#> .
+@prefix emobon-core: <https://data.emobon.embrc.eu/ns/core#> .
+@prefix emobon-sampling: <https://data.emobon.embrc.eu/ns/sampling#> .
+@prefix core_vocab: <https://data.emobon.embrc.eu/ns/core_vocab#> .
+@prefix csvw: <http://www.w3.org/ns/csvw#>.
+
+@base <http://data.emobon.embrc.eu/observatory-bpns-crate/sediment/sample/EMOBON_BPNS_So_12> . 
+<> 
+    a sosa:Sample, prov:Entity ;
+    
+    sosa:isResultOf </observatory-bpns-crate/sediment/sampling-event/BPNS_So_210825> ;
+    
+    emobon-sampling:origEmobonId 'EMOBON-210825-330-SoSOP3-Micro-R2'^^xsd:string ; 
+    
+    dct:description 'EMOBON metagenome sediment sample from station BPNS collected on 2021-08-25 community collected micro'^^xsd:string ; 
+    emobon-sampling:sampleReplicate '2'^^xsd:string ;
+    schema:additionalType "http://vocab.nerc.ac.uk/collection/S29/current/PE001525/"^^xsd:anyURI ; 
+    schema:additionalType core_vocab:fieldSample ;
+    emobon-sampling:longStorage 'false'^^xsd:boolean ;
+    emobon-sampling:failure 'true'^^xsd:boolean ;
+    emobon-sampling:failureComment 'low yields; seq library prep failed'^^xsd:string ;
+    
+    
+    emobon-sampling:environmentMaterial<http://purl.obolibrary.org/obo/ENVO_00002007>;
+    emobon-sampling:investigationType 'metagenome'^^xsd:string ;
+    emobon-sampling:taxonomicID 'https://www.ncbi.nlm.nih.gov/taxonomy/browser/wwwtax.cgi?id=412755'^^xsd:anyURI ;
+    emobon-sampling:taxonomicName 'marine sediment metagenome'^^xsd:string ;
+    emobon-sampling:bioCommunity 'micro'^^xsd:string ;
+
+    
+    prov:wasAssociatedWith [
+        a prov:Person, schema:Person ;
+        schema:name 'Sander Delacauw'^^xsd:string ;
+        schema:identifier 'https://orcid.org/0000-0002-5400-2891'^^xsd:anyURI ;
+    ] , [
+        a prov:Person, schema:Person ;
+        schema:name 'Sander Delacauw'^^xsd:string ;
+        schema:identifier 'https://orcid.org/0000-0002-5400-2891'^^xsd:anyURI ;
+    ] , [
+        a prov:Person, schema:Person ;
+        schema:name 'Rune Lagaisse'^^xsd:string ;
+        schema:identifier 'https://orcid.org/0000-0001-9191-9140'^^xsd:anyURI ;
+    ] ; 
+    prov:wasGeneratedBy [
+        a prov:Activity ;
+        dct:type "storage"^^xsd:string ; 
+        dct:description "Storage of sample at sequencing centre for subsequent DNA sequencing"^^xsd:string ; 
+        prov:startedAtTime '2021-11-24'^^xsd:date ; 
+        
+        prov:wasInformedBy [
+            
+            a prov:Activity ;
+            dct:type "transport"^^xsd:string ; 
+            dct:description "Shipping of sample from HMBRC HQ to sequencing centre"^^xsd:string ; 
+            prov:startedAtTime '2021-11-24'^^xsd:date ;
+            prov:endedAtTime '2021-11-24'^^xsd:date ;
+            prov:wasInformedBy [
+                
+                a prov:Activity ;
+                dct:type "storage"^^xsd:string ; 
+                dct:description "Storage of sample at HMBRC HQ"^^xsd:string ; 
+                prov:startedAtTime '2021-10-08'^^xsd:date ;
+                emobon-sampling:storageTemp [
+                    a qudt:QuantityValue ; 
+                    qudt:numericValue '-70.0'^^xsd:double ; 
+                    qudt:unit <http://vocab.nerc.ac.uk/collection/P06/current/UPAA/> ;
+                ] ;
+                prov:wasInformedBy [
+                    
+                    a prov:Activity ;
+                    dct:type "transport"^^xsd:string ; 
+                    dct:description "Shipping of sample to HMBRC HQ"^^xsd:string ; 
+                    prov:startedAtTime '2021-10-05'^^xsd:date ;
+                    prov:endedAtTime '2021-10-08'^^xsd:date ; 
+                    prov:wasInformedBy [
+                        a prov:Activity ;
+                        dct:type "storage"^^xsd:string ; 
+                        dct:description "Local storage of the collected sample"^^xsd:string ; 
+                        prov:startedAtTime '2021-08-25'^^xsd:date ;
+                        prov:wasAssociatedWith [
+                            a prov:Person, schema:Person ;
+                            schema:name 'Sander Delacauw'^^xsd:string ;
+                            schema:identifier 'https://orcid.org/0000-0002-5400-2891'^^xsd:anyURI ;
+                        ] ;
+                        emobon-sampling:storageTemp [
+                            a qudt:QuantityValue ; 
+                            qudt:numericValue '-80.0'^^xsd:double ; 
+                            qudt:unit <http://vocab.nerc.ac.uk/collection/P06/current/UPAA/> ;
+                        ] ;
+                        emobon-sampling:storageLoc 'MSO LifeWatch Lab -80 Freezer'^^xsd:string ;
+                        prov:wasInformedBy <> ; 
+                    ] ;
+                ] ;
+            ] ;
+        ] ; 
+    ] ;
+.
+

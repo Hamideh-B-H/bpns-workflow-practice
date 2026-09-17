@@ -1,0 +1,85 @@
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> . 
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix schema: <https://schema.org/> . 
+@prefix prov: <http://www.w3.org/ns/prov#> . 
+@prefix sosa: <http://www.w3.org/ns/sosa/> . 
+@prefix ssn: <http://www.w3.org/ns/ssn/> . 
+@prefix qudt: <http://qudt.org/schema/qudt/> . 
+@prefix sf: <http://www.opengis.net/ont/sf#> .
+@prefix geo: <http://www.opengis.net/ont/geosparql#> .
+@prefix mr: <http://marineregions.org/ns/ontology#> .
+@prefix emobon-sequence: <https://data.emobon.embrc.eu/ns/sequence#> .
+@prefix emobon-core: <https://data.emobon.embrc.eu/ns/core#> .
+@prefix emobon-sampling: <https://data.emobon.embrc.eu/ns/sampling#> .
+@prefix core_vocab: <https://data.emobon.embrc.eu/ns/core_vocab#> .
+@prefix csvw: <http://www.w3.org/ns/csvw#>.
+
+
+
+@base <http://data.emobon.embrc.eu/observatory-bpns-crate/water/observation/EMOBON_BPNS_Wa_61> . 
+<#chlorophyll>
+    a sosa:Observation, schema:Observation , csvw:Cell ;
+    sosa:observedProperty [
+        a sosa:ObservableProperty ; 
+        dct:identifier <http://vocab.nerc.ac.uk/collection/S27/current/CS002896/> ;
+        rdfs:label 'chlorophyll'^^xsd:string ; 
+    ] ;
+
+    sosa:hasResult [
+        a sosa:Result , qudt:QuantityValue ;
+        qudt:numericValue '0.539'^^xsd:double ;
+        qudt:unit <http://vocab.nerc.ac.uk/collection/P06/current/UGPL/> ; 
+    ] ;
+    schema:measurementTechnique 'HPLC'^^xsd:string ;
+    sosa:hasFeatureOfInterest </observatory-bpns-crate/water/sample/EMOBON_BPNS_Wa_61> ; 
+.
+<#nitrate>
+    a sosa:Observation, schema:Observation , csvw:Cell ;
+    sosa:observedProperty [
+        a sosa:ObservableProperty ; 
+        dct:identifier <http://vocab.nerc.ac.uk/collection/P01/current/NTRAZZXX/> ;
+        rdfs:label 'nitrate'^^xsd:string ; 
+    ] ;
+
+    sosa:hasResult [
+        a sosa:Result , qudt:QuantityValue ;
+        qudt:numericValue '14.43'^^xsd:double ;
+        qudt:unit <http://vocab.nerc.ac.uk/collection/P06/current/UPOX/> ; 
+    ] ;
+    schema:measurementTechnique 'SEAL QuAAtro analysis system + Skalar AutoAnalyser system'^^xsd:string ;
+    sosa:hasFeatureOfInterest </observatory-bpns-crate/water/sample/EMOBON_BPNS_Wa_61> ; 
+.
+<#nitrite>
+    a sosa:Observation, schema:Observation , csvw:Cell ;
+    sosa:observedProperty [
+        a sosa:ObservableProperty ; 
+        dct:identifier <http://vocab.nerc.ac.uk/collection/P01/current/NTRIZZXX/> ;
+        rdfs:label 'nitrite'^^xsd:string ; 
+    ] ;
+
+    sosa:hasResult [
+        a sosa:Result , qudt:QuantityValue ;
+        qudt:numericValue '0.45'^^xsd:double ;
+        qudt:unit <http://vocab.nerc.ac.uk/collection/P06/current/UPOX/> ; 
+    ] ;
+    schema:measurementTechnique 'SEAL QuAAtro analysis system + Skalar AutoAnalyser system'^^xsd:string ;
+    sosa:hasFeatureOfInterest </observatory-bpns-crate/water/sample/EMOBON_BPNS_Wa_61> ; 
+.
+<#silicate>
+    a sosa:Observation, schema:Observation , csvw:Cell ;
+    sosa:observedProperty [
+        a sosa:ObservableProperty ; 
+        dct:identifier <http://vocab.nerc.ac.uk/collection/P02/current/SLCA/> ;
+        rdfs:label 'silicate'^^xsd:string ; 
+    ] ;
+
+    sosa:hasResult [
+        a sosa:Result , qudt:QuantityValue ;
+        qudt:numericValue '4.36'^^xsd:double ;
+        qudt:unit <http://vocab.nerc.ac.uk/collection/P06/current/UPOX/> ; 
+    ] ;
+    schema:measurementTechnique 'SEAL QuAAtro analysis system + Skalar AutoAnalyser system'^^xsd:string ;
+    sosa:hasFeatureOfInterest </observatory-bpns-crate/water/sample/EMOBON_BPNS_Wa_61> ; 
+.
